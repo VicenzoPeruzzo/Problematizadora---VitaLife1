@@ -1,0 +1,27 @@
+{
+  "name": "Doctor",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Nome completo do médico"
+    },
+    "specialty": {
+      "type": "string",
+      "description": "Especialidade médica"
+    },
+    "crm": {
+      "type": "string",
+      "description": "Número do CRM"
+    },
+    "photo_url": {
+      "type": "string",
+      "description": "URL da foto do médico"
+    }
+  },
+  "required": [
+    "name",
+    "specialty",
+    "crm"
+  ]
+}
