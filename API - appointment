@@ -1,0 +1,27 @@
+// JavaScript Example: Reading Entities
+// Filterable fields: doctor_id, doctor_name, doctor_specialty, appointment_date, appointment_time, status, patient_email
+async function fetchAppointmentEntities() {
+    const response = await fetch(`https://app.base44.com/api/apps/68e2be3b93bbccf5dac77879/entities/Appointment`, {
+        headers: {
+            'api_key': '7efa358b7ea646b683b1dbfa350736f0', // or use await User.me() to get the API key
+            'Content-Type': 'application/json'
+        }
+    });
+    const data = await response.json();
+    console.log(data);
+}
+
+// JavaScript Example: Updating an Entity
+// Filterable fields: doctor_id, doctor_name, doctor_specialty, appointment_date, appointment_time, status, patient_email
+async function updateAppointmentEntity(entityId, updateData) {
+    const response = await fetch(`https://app.base44.com/api/apps/68e2be3b93bbccf5dac77879/entities/Appointment/${entityId}`, {
+        method: 'PUT',
+        headers: {
+            'api_key': '7efa358b7ea646b683b1dbfa350736f0', // or use await User.me() to get the API key
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updateData)
+    });
+    const data = await response.json();
+    console.log(data);
+}
