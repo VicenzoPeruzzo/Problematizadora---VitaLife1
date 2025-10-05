@@ -1,0 +1,305 @@
+import React, { useState, useEffect } from "react";
+import { Appointment } from "@/entities/Appointment";
+import { Doctor } from "@/entities/Doctor";
+import { User } from "@/entities/User";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Calendar as CalendarIcon, 
+  Clock, 
+  CheckCircle, 
+  XCircle,
+  Plus,
+  User as UserIcon
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+
+export default function AppointmentsPage() {
+  const [appointments, setAppointments] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [user, setUser] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+  
+  // Form state
+  const [selectedDoctor, setSelectedDoctor] = useState("");
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedTime, setSelectedTime] = useState("");
+
+  const availableTimes = ["09:30", "10:30", "14:30", "16:00"];
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      const currentUser = await User.me();
+      setUser(currentUser);
+      
+      const [appointmentsData, doctorsData] = await Promise.all([
+        Appointment.filter({ patient_email: currentUser.email }, "-appointment_date"),
+        Doctor.list()
+      ]);
+      
+      setAppointments(appointmentsData);
+      setDoctors(doctorsData);
+    } catch (error) {
+      console.error("Error loading data:", error);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    const doctor = doctors.find(d => d.id === selectedDoctor);
+    if (!doctor || !selectedDate || !selectedTime) return;
+
+    await Appointment.create({
+      doctor_id: doctor.id,
+      doctor_name: doctor.name,
+      doctor_specialty: doctor.specialty,
+      appointment_date: format(selectedDate, "yyyy-MM-dd"),
+      appointment_time: selectedTime,
+      patient_email: user.email,
+      status: "scheduled"
+    });
+
+    setShowForm(false);
+    setSelectedDoctor("");
+    setSelectedDate(null);
+    setSelectedTime("");
+    loadData();
+  };
+
+  const cancelAppointment = async (id) => {
+    await Appointment.update(id, { status: "cancelled" });
+    loadData();
+  };
+
+  const statusConfig = {
+    scheduled: { label: "Agendada", color: "bg-blue-100 text-blue-700 border-blue-200" },
+    completed: { label: "Concluída", color: "bg-green-100 text-green-700 border-green-200" },
+    cancelled: { label: "Cancelada", color: "bg-red-100 text-red-700 border-red-200" }
+  };
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Card className="p-8 text-center">
+          <UserIcon className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+          <h2 className="text-2xl font-bold mb-4">Faça login para agendar consultas</h2>
+          <Button onClick={() => User.login()}>Fazer Login</Button>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-green-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex justify-between items-center mb-8"
+        >
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">Agendamentos</h1>
+            <p className="text-gray-600 text-lg">Gerencie suas consultas médicas</p>
+          </div>
+          <Button
+            onClick={() => setShowForm(!showForm)}
+            className="bg-green-600 hover:bg-green-700 shadow-lg"
+            size="lg"
+          >
+            <Plus className="w-5 h-5 mr-2" />
+            Nova Consulta
+          </Button>
+        </motion.div>
+
+        <AnimatePresence>
+          {showForm && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="mb-8"
+            >
+              <Card className="shadow-2xl border-none">
+                <CardHeader className="border-b bg-gradient-to-r from-green-50 to-green-100">
+                  <CardTitle className="text-2xl">Agendar Nova Consulta</CardTitle>
+                </CardHeader>
+                <CardContent className="p-8">
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Selecione o Médico
+                      </label>
+                      <Select value={selectedDoctor} onValueChange={setSelectedDoctor}>
+                        <SelectTrigger className="h-12">
+                          <SelectValue placeholder="Escolha um médico..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {doctors.map((doctor) => (
+                            <SelectItem key={doctor.id} value={doctor.id}>
+                              Dr. {doctor.name} - {doctor.specialty}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Escolha a Data
+                      </label>
+                      <div className="border rounded-lg p-4 bg-white">
+                        <Calendar
+                          mode="single"
+                          selected={selectedDate}
+                          onSelect={setSelectedDate}
+                          locale={ptBR}
+                          disabled={(date) => date < new Date()}
+                          className="mx-auto"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Horários Disponíveis
+                      </label>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        {availableTimes.map((time) => (
+                          <button
+                            key={time}
+                            type="button"
+                            onClick={() => setSelectedTime(time)}
+                            className={`p-4 rounded-lg border-2 font-medium transition-all ${
+                              selectedTime === time
+                                ? "border-green-500 bg-green-50 text-green-700 shadow-md"
+                                : "border-gray-200 hover:border-gray-300"
+                            }`}
+                          >
+                            <Clock className="w-4 h-4 mx-auto mb-1" />
+                            {time}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3 pt-4">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setShowForm(false)}
+                        className="flex-1"
+                      >
+                        Cancelar
+                      </Button>
+                      <Button
+                        type="submit"
+                        disabled={!selectedDoctor || !selectedDate || !selectedTime}
+                        className="flex-1 bg-green-600 hover:bg-green-700"
+                      >
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        Confirmar Agendamento
+                      </Button>
+                    </div>
+                  </form>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Appointments List */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {appointments.map((appointment, index) => (
+            <motion.div
+              key={appointment.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 * index }}
+            >
+              <Card className="hover:shadow-xl transition-all duration-300 border-none">
+                <div className={`h-2 ${appointment.status === 'scheduled' ? 'bg-green-500' : appointment.status === 'completed' ? 'bg-blue-500' : 'bg-red-500'}`}></div>
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <CardTitle className="text-xl mb-2">
+                        Dr. {appointment.doctor_name}
+                      </CardTitle>
+                      <p className="text-gray-600">{appointment.doctor_specialty}</p>
+                    </div>
+                    <Badge className={`${statusConfig[appointment.status].color} border`}>
+                      {statusConfig[appointment.status].label}
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <CalendarIcon className="w-4 h-4 text-green-600" />
+                      <span className="font-medium">
+                        {format(new Date(appointment.appointment_date), "dd 'de' MMMM, yyyy", { locale: ptBR })}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <Clock className="w-4 h-4 text-green-600" />
+                      <span className="font-medium">{appointment.appointment_time}</span>
+                    </div>
+                  </div>
+                  
+                  {appointment.status === "scheduled" && (
+                    <Button
+                      variant="outline"
+                      className="w-full mt-4 text-red-600 hover:bg-red-50 hover:text-red-700 border-red-200"
+                      onClick={() => cancelAppointment(appointment.id)}
+                    >
+                      <XCircle className="w-4 h-4 mr-2" />
+                      Cancelar Consulta
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+
+        {appointments.length === 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-20"
+          >
+            <CalendarIcon className="w-24 h-24 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+              Nenhuma consulta agendada
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Comece agendando sua primeira consulta
+            </p>
+            <Button
+              onClick={() => setShowForm(true)}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Agendar Consulta
+            </Button>
+          </motion.div>
+        )}
+      </div>
+    </div>
+  );
+}
