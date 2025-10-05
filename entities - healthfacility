@@ -1,0 +1,40 @@
+{
+  "name": "HealthFacility",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Nome do estabelecimento"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "hospital",
+        "clinic",
+        "health_center"
+      ],
+      "description": "Tipo de estabelecimento"
+    },
+    "address": {
+      "type": "string",
+      "description": "Endereço completo"
+    },
+    "latitude": {
+      "type": "number",
+      "description": "Latitude"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "Longitude"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Telefone"
+    }
+  },
+  "required": [
+    "name",
+    "type",
+    "address"
+  ]
+}
