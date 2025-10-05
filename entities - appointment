@@ -1,0 +1,47 @@
+{
+  "name": "Appointment",
+  "type": "object",
+  "properties": {
+    "doctor_id": {
+      "type": "string",
+      "description": "ID do médico"
+    },
+    "doctor_name": {
+      "type": "string",
+      "description": "Nome do médico"
+    },
+    "doctor_specialty": {
+      "type": "string",
+      "description": "Especialidade do médico"
+    },
+    "appointment_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Data da consulta"
+    },
+    "appointment_time": {
+      "type": "string",
+      "description": "Horário da consulta"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "scheduled",
+        "completed",
+        "cancelled"
+      ],
+      "default": "scheduled",
+      "description": "Status da consulta"
+    },
+    "patient_email": {
+      "type": "string",
+      "description": "Email do paciente"
+    }
+  },
+  "required": [
+    "doctor_id",
+    "doctor_name",
+    "appointment_date",
+    "appointment_time"
+  ]
+}
