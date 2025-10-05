@@ -1,0 +1,386 @@
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { motion } from "framer-motion";
+import { 
+  FileCode, 
+  Globe, 
+  Smartphone, 
+  Zap, 
+  Shield,
+  Database,
+  Code,
+  Palette,
+  BookOpen
+} from "lucide-react";
+
+export default function Documentation() {
+  const technologies = [
+    {
+      name: "React.js",
+      description: "Framework JavaScript moderno para interfaces",
+      icon: Code,
+      color: "from-blue-500 to-blue-600"
+    },
+    {
+      name: "React Router",
+      description: "Navegação entre páginas single-page application",
+      icon: Globe,
+      color: "from-purple-500 to-purple-600"
+    },
+    {
+      name: "Tailwind CSS",
+      description: "Framework CSS utility-first para design responsivo",
+      icon: Palette,
+      color: "from-cyan-500 to-cyan-600"
+    },
+    {
+      name: "Shadcn/UI",
+      description: "Componentes UI modernos e acessíveis",
+      icon: Smartphone,
+      color: "from-green-500 to-green-600"
+    },
+    {
+      name: "React Leaflet",
+      description: "Biblioteca para mapas interativos (API OpenStreetMap)",
+      icon: Globe,
+      color: "from-red-500 to-red-600"
+    },
+    {
+      name: "Date-fns",
+      description: "Biblioteca para manipulação de datas",
+      icon: Zap,
+      color: "from-orange-500 to-orange-600"
+    },
+    {
+      name: "Base44 Backend",
+      description: "API RESTful para persistência de dados",
+      icon: Database,
+      color: "from-indigo-500 to-indigo-600"
+    },
+    {
+      name: "Autenticação OAuth",
+      description: "Sistema de login seguro via Google",
+      icon: Shield,
+      color: "from-pink-500 to-pink-600"
+    }
+  ];
+
+  const features = [
+    {
+      title: "RF01 - Cadastro e Autenticação",
+      description: "Sistema completo de login com Google OAuth, seguro e moderno",
+      status: "Implementado"
+    },
+    {
+      title: "RF02 - Mapa Interativo",
+      description: "Mapa com OpenStreetMap API mostrando hospitais, clínicas e postos",
+      status: "Implementado"
+    },
+    {
+      title: "RF03 - Listagem de Médicos",
+      description: "Lista completa com filtros, busca e informações detalhadas",
+      status: "Implementado"
+    },
+    {
+      title: "RF04 - Agendamento de Consultas",
+      description: "Sistema de calendário interativo com seleção de horários",
+      status: "Implementado"
+    },
+    {
+      title: "RF05 - Lembretes e Notificações",
+      description: "Central de notificações com diferentes tipos de lembretes",
+      status: "Implementado"
+    },
+    {
+      title: "RF06 - Gestão de Assinaturas",
+      description: "Planos Mensal (R$29,90) e Anual (R$229,90) com benefícios",
+      status: "Implementado"
+    }
+  ];
+
+  const apis = [
+    {
+      name: "Base44 REST API",
+      endpoint: "/api/entities/*",
+      description: "CRUD completo para todas as entidades (Doctor, Appointment, etc)",
+      methods: ["GET", "POST", "PUT", "DELETE"]
+    },
+    {
+      name: "OpenStreetMap API",
+      endpoint: "https://tile.openstreetmap.org",
+      description: "Mapas interativos com marcadores personalizados",
+      methods: ["GET"]
+    },
+    {
+      name: "Google OAuth API",
+      endpoint: "/auth/google",
+      description: "Autenticação segura de usuários",
+      methods: ["POST"]
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-green-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-12 text-center"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-700 rounded-full mb-4">
+            <BookOpen className="w-4 h-4" />
+            <span className="font-medium">Documentação Técnica</span>
+          </div>
+          <h1 className="text-5xl font-bold text-gray-900 mb-4">
+            VitaLife - Projeto Técnico
+          </h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Aplicação Web Progressive (PWA) para gerenciamento integrado de saúde
+          </p>
+        </motion.div>
+
+        {/* Arquitetura */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="mb-12"
+        >
+          <Card className="shadow-2xl border-none">
+            <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white">
+              <CardTitle className="text-3xl flex items-center gap-3">
+                <FileCode className="w-8 h-8" />
+                Arquitetura da Aplicação
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-8">
+              <div className="prose max-w-none">
+                <h3 className="text-2xl font-bold mb-4">Padrão SPA (Single Page Application)</h3>
+                <p className="text-gray-600 text-lg mb-6">
+                  O VitaLife foi desenvolvido como uma aplicação web moderna utilizando o padrão SPA,
+                  onde toda a aplicação é carregada uma única vez e a navegação entre páginas acontece
+                  de forma dinâmica sem recarregar a página inteira, proporcionando uma experiência
+                  fluida similar a aplicativos nativos.
+                </p>
+
+                <h3 className="text-2xl font-bold mb-4">Estrutura do Projeto</h3>
+                <div className="bg-gray-900 text-green-400 p-6 rounded-lg font-mono text-sm mb-6">
+                  <pre>{`vitalife/
+├── entities/              # Modelos de dados (schemas JSON)
+│   ├── User.json
+│   ├── Doctor.json
+│   ├── HealthFacility.json
+│   ├── Appointment.json
+│   └── Reminder.json
+│
+├── pages/                 # Páginas da aplicação
+│   ├── Home.js           # Página inicial
+│   ├── Map.js            # Mapa interativo
+│   ├── Doctors.js        # Lista de médicos
+│   ├── Appointments.js   # Agendamentos
+│   ├── Reminders.js      # Lembretes
+│   └── Subscriptions.js  # Planos
+│
+├── components/            # Componentes reutilizáveis
+│   └── ui/               # Biblioteca Shadcn/UI
+│
+└── Layout.js             # Layout global com sidebar`}</pre>
+                </div>
+
+                <h3 className="text-2xl font-bold mb-4">Requisitos Não Funcionais Atendidos</h3>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
+                    <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                      <Shield className="w-4 h-4 text-green-600" />
+                    </div>
+                    <div>
+                      <strong>RNF01 - Usabilidade:</strong> Interface intuitiva seguindo os mockups,
+                      design responsivo mobile-first
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                      <Shield className="w-4 h-4 text-green-600" />
+                    </div>
+                    <div>
+                      <strong>RNF02 - Segurança:</strong> OAuth 2.0, HTTPS, dados criptografados
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                      <Zap className="w-4 h-4 text-green-600" />
+                    </div>
+                    <div>
+                      <strong>RNF03 - Desempenho:</strong> Carregamento otimizado, lazy loading, cache
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                      <Smartphone className="w-4 h-4 text-green-600" />
+                    </div>
+                    <div>
+                      <strong>RNF04 - Compatibilidade:</strong> Funciona em todos navegadores modernos,
+                      iOS, Android, Windows, Mac, Linux
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                      <Database className="w-4 h-4 text-green-600" />
+                    </div>
+                    <div>
+                      <strong>RNF05 - Disponibilidade:</strong> Cloud hosting com 99.9% uptime
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Tecnologias */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mb-12"
+        >
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">Tecnologias Utilizadas</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {technologies.map((tech, index) => {
+              const Icon = tech.icon;
+              return (
+                <Card key={index} className="hover:shadow-xl transition-all duration-300">
+                  <CardContent className="p-6">
+                    <div className={`w-12 h-12 bg-gradient-to-br ${tech.color} rounded-xl flex items-center justify-center mb-4 shadow-lg`}>
+                      <Icon className="w-6 h-6 text-white" />
+                    </div>
+                    <h3 className="font-bold text-lg mb-2">{tech.name}</h3>
+                    <p className="text-sm text-gray-600">{tech.description}</p>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </motion.div>
+
+        {/* Requisitos Funcionais */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="mb-12"
+        >
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">Requisitos Funcionais</h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            {features.map((feature, index) => (
+              <Card key={index} className="hover:shadow-xl transition-all duration-300">
+                <CardContent className="p-6">
+                  <div className="flex items-start justify-between mb-3">
+                    <h3 className="font-bold text-lg">{feature.title}</h3>
+                    <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+                      {feature.status}
+                    </span>
+                  </div>
+                  <p className="text-gray-600">{feature.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* APIs Integradas */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="mb-12"
+        >
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">APIs Integradas</h2>
+          <div className="space-y-4">
+            {apis.map((api, index) => (
+              <Card key={index} className="hover:shadow-xl transition-all duration-300">
+                <CardContent className="p-6">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h3 className="font-bold text-xl mb-1">{api.name}</h3>
+                      <code className="text-sm text-gray-600 bg-gray-100 px-2 py-1 rounded">
+                        {api.endpoint}
+                      </code>
+                    </div>
+                    <div className="flex gap-2">
+                      {api.methods.map(method => (
+                        <span 
+                          key={method}
+                          className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-mono rounded"
+                        >
+                          {method}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <p className="text-gray-600">{api.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Princípios UX */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          <Card className="shadow-2xl border-none">
+            <CardHeader className="bg-gradient-to-r from-purple-600 to-purple-700 text-white">
+              <CardTitle className="text-3xl flex items-center gap-3">
+                <Palette className="w-8 h-8" />
+                Princípios de UX Aplicados
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-8">
+              <div className="grid md:grid-cols-2 gap-8">
+                <div>
+                  <h3 className="text-xl font-bold mb-4">Design Responsivo</h3>
+                  <ul className="space-y-2 text-gray-600">
+                    <li>✓ Mobile-first approach</li>
+                    <li>✓ Breakpoints otimizados</li>
+                    <li>✓ Touch-friendly interfaces</li>
+                    <li>✓ Adaptação automática de layout</li>
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold mb-4">Acessibilidade</h3>
+                  <ul className="space-y-2 text-gray-600">
+                    <li>✓ Contraste adequado de cores</li>
+                    <li>✓ Navegação por teclado</li>
+                    <li>✓ Labels descritivos</li>
+                    <li>✓ Feedback visual claro</li>
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold mb-4">Consistência Visual</h3>
+                  <ul className="space-y-2 text-gray-600">
+                    <li>✓ Paleta de cores verde/branco</li>
+                    <li>✓ Tipografia hierárquica</li>
+                    <li>✓ Iconografia uniforme</li>
+                    <li>✓ Espaçamento padronizado</li>
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold mb-4">Performance</h3>
+                  <ul className="space-y-2 text-gray-600">
+                    <li>✓ Animações suaves (Framer Motion)</li>
+                    <li>✓ Carregamento progressivo</li>
+                    <li>✓ Estados de loading</li>
+                    <li>✓ Otimização de imagens</li>
+                  </ul>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
