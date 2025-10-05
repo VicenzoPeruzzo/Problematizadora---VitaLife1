@@ -1,0 +1,155 @@
+import React, { useState, useEffect } from "react";
+import { Doctor } from "@/entities/Doctor";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { UserCircle, Stethoscope, IdCard, Calendar, Search } from "lucide-react";
+import { motion } from "framer-motion";
+import { Skeleton } from "@/components/ui/skeleton";
+
+export default function DoctorsPage() {
+  const [doctors, setDoctors] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    loadDoctors();
+  }, []);
+
+  const loadDoctors = async () => {
+    setIsLoading(true);
+    const data = await Doctor.list();
+    setDoctors(data);
+    setIsLoading(false);
+  };
+
+  const filteredDoctors = doctors.filter(doctor =>
+    doctor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    doctor.specialty.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const specialtyColors = [
+    "bg-blue-100 text-blue-700 border-blue-200",
+    "bg-purple-100 text-purple-700 border-purple-200",
+    "bg-pink-100 text-pink-700 border-pink-200",
+    "bg-orange-100 text-orange-700 border-orange-200",
+    "bg-teal-100 text-teal-700 border-teal-200",
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-green-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Médicos Parceiros</h1>
+          <p className="text-gray-600 text-lg">
+            Profissionais qualificados para cuidar da sua saúde
+          </p>
+        </motion.div>
+
+        {/* Search Bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="mb-8"
+        >
+          <div className="relative max-w-2xl">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Input
+              type="text"
+              placeholder="Buscar por nome ou especialidade..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-12 py-6 text-lg border-2 focus:border-green-500 rounded-xl shadow-lg"
+            />
+          </div>
+        </motion.div>
+
+        {/* Doctors Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {isLoading ? (
+            Array(6).fill(0).map((_, i) => (
+              <Card key={i} className="overflow-hidden">
+                <CardHeader>
+                  <Skeleton className="h-6 w-3/4" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-4 w-full mb-2" />
+                  <Skeleton className="h-4 w-2/3" />
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            filteredDoctors.map((doctor, index) => (
+              <motion.div
+                key={doctor.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 * index }}
+              >
+                <Card className="group hover:shadow-2xl transition-all duration-300 border-none overflow-hidden h-full bg-white">
+                  <div className="h-2 bg-gradient-to-r from-green-500 to-green-600"></div>
+                  <CardHeader className="pb-4">
+                    <div className="flex items-start gap-4">
+                      <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform">
+                        <UserCircle className="w-10 h-10 text-white" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <CardTitle className="text-xl mb-2 group-hover:text-green-600 transition-colors">
+                          Dr. {doctor.name}
+                        </CardTitle>
+                        <Badge 
+                          className={`${specialtyColors[index % specialtyColors.length]} border font-medium`}
+                        >
+                          <Stethoscope className="w-3 h-3 mr-1" />
+                          {doctor.specialty}
+                        </Badge>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3 mb-6">
+                      <div className="flex items-center gap-2 text-gray-600">
+                        <IdCard className="w-4 h-4 text-green-600" />
+                        <span className="text-sm font-medium">CRM: {doctor.crm}</span>
+                      </div>
+                    </div>
+                    <Link to={createPageUrl("Appointments")}>
+                      <Button className="w-full bg-green-600 hover:bg-green-700 shadow-lg group-hover:shadow-xl transition-all">
+                        <Calendar className="w-4 h-4 mr-2" />
+                        Agendar Consulta
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))
+          )}
+        </div>
+
+        {filteredDoctors.length === 0 && !isLoading && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-20"
+          >
+            <UserCircle className="w-24 h-24 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+              Nenhum médico encontrado
+            </h3>
+            <p className="text-gray-600">
+              Tente buscar por outro nome ou especialidade
+            </p>
+          </motion.div>
+        )}
+      </div>
+    </div>
+  );
+}
