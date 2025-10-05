@@ -1,0 +1,240 @@
+import React, { useState, useEffect } from "react";
+import { User } from "@/entities/User";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { motion } from "framer-motion";
+import { 
+  Check, 
+  Crown, 
+  Star,
+  Sparkles,
+  User as UserIcon
+} from "lucide-react";
+
+export default function SubscriptionsPage() {
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    loadUser();
+  }, []);
+
+  const loadUser = async () => {
+    try {
+      const currentUser = await User.me();
+      setUser(currentUser);
+    } catch (error) {
+      console.log("User not logged in");
+    }
+  };
+
+  const handleSubscribe = async (type) => {
+    setIsLoading(true);
+    await User.updateMyUserData({
+      subscription_type: type,
+      subscription_start_date: new Date().toISOString().split('T')[0]
+    });
+    await loadUser();
+    setIsLoading(false);
+  };
+
+  const plans = [
+    {
+      id: "monthly",
+      name: "Plano Mensal",
+      price: "R$ 29,90",
+      period: "/mês",
+      icon: Star,
+      color: "from-blue-500 to-blue-600",
+      features: [
+        "Agendamento prioritário",
+        "Consultas online",
+        "Desconto em medicamentos",
+        "Suporte 24/7"
+      ]
+    },
+    {
+      id: "annual",
+      name: "Plano Anual",
+      price: "R$ 229,90",
+      period: "/ano",
+      icon: Crown,
+      color: "from-purple-500 to-purple-600",
+      popular: true,
+      features: [
+        "Todos os benefícios do plano mensal",
+        "Descontos maiores no plano familiar",
+        "Consultas extras",
+        "Brindes e vouchers",
+        "Trilha de saúde personalizada"
+      ]
+    }
+  ];
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Card className="p-8 text-center">
+          <UserIcon className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+          <h2 className="text-2xl font-bold mb-4">Faça login para ver os planos</h2>
+          <Button onClick={() => User.login()}>Fazer Login</Button>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-green-50 p-6">
+      <div className="max-w-6xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-12"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-700 rounded-full mb-4">
+            <Sparkles className="w-4 h-4" />
+            <span className="font-medium">Planos Exclusivos</span>
+          </div>
+          <h1 className="text-5xl font-bold text-gray-900 mb-4">
+            Escolha Seu Plano
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Benefícios diferenciados para uma experiência completa de saúde
+          </p>
+        </motion.div>
+
+        {/* Current Subscription */}
+        {user.subscription_type && user.subscription_type !== "none" && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-12"
+          >
+            <Card className="bg-gradient-to-r from-green-600 to-green-700 text-white border-none shadow-2xl">
+              <CardContent className="p-8">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                      <Crown className="w-8 h-8" />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold mb-1">Plano Ativo</h3>
+                      <p className="text-green-100">
+                        {user.subscription_type === "monthly" ? "Mensal" : "Anual"}
+                      </p>
+                    </div>
+                  </div>
+                  <Badge className="bg-white text-green-700 px-4 py-2 text-base">
+                    <Check className="w-4 h-4 mr-1" />
+                    Ativo
+                  </Badge>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+
+        {/* Plans Grid */}
+        <div className="grid md:grid-cols-2 gap-8">
+          {plans.map((plan, index) => {
+            const Icon = plan.icon;
+            const isActive = user.subscription_type === plan.id;
+            
+            return (
+              <motion.div
+                key={plan.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 * index }}
+                className="relative"
+              >
+                {plan.popular && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
+                    <Badge className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-4 py-1 text-sm shadow-lg">
+                      <Star className="w-3 h-3 mr-1" />
+                      Mais Popular
+                    </Badge>
+                  </div>
+                )}
+                
+                <Card className={`h-full hover:shadow-2xl transition-all duration-300 border-2 ${
+                  plan.popular ? 'border-purple-500 shadow-xl' : 'border-transparent'
+                } ${isActive ? 'ring-4 ring-green-500' : ''}`}>
+                  <div className={`h-2 bg-gradient-to-r ${plan.color}`}></div>
+                  
+                  <CardHeader className="p-8 pb-4">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className={`w-14 h-14 bg-gradient-to-br ${plan.color} rounded-2xl flex items-center justify-center shadow-lg`}>
+                        <Icon className="w-7 h-7 text-white" />
+                      </div>
+                      {isActive && (
+                        <Badge className="bg-green-100 text-green-700 border-green-200">
+                          Plano Atual
+                        </Badge>
+                      )}
+                    </div>
+                    <CardTitle className="text-3xl mb-2">{plan.name}</CardTitle>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-5xl font-bold text-gray-900">
+                        {plan.price.split(' ')[1]}
+                      </span>
+                      <span className="text-gray-600 text-lg">{plan.period}</span>
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="p-8 pt-4">
+                    <ul className="space-y-4 mb-8">
+                      {plan.features.map((feature, i) => (
+                        <li key={i} className="flex items-start gap-3">
+                          <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Check className="w-3 h-3 text-green-600" />
+                          </div>
+                          <span className="text-gray-700">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <Button
+                      onClick={() => handleSubscribe(plan.id)}
+                      disabled={isActive || isLoading}
+                      className={`w-full py-6 text-lg font-semibold ${
+                        plan.popular
+                          ? 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800'
+                          : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800'
+                      } ${isActive ? 'opacity-50' : ''}`}
+                    >
+                      {isActive ? 'Plano Ativo' : 'Assinar Agora'}
+                    </Button>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* Benefits Section */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="mt-16 text-center"
+        >
+          <Card className="bg-gradient-to-br from-green-50 to-green-100 border-none shadow-xl">
+            <CardContent className="p-12">
+              <Sparkles className="w-12 h-12 text-green-600 mx-auto mb-4" />
+              <h3 className="text-3xl font-bold text-gray-900 mb-4">
+                Por que escolher o VitaLife?
+              </h3>
+              <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+                Oferecemos benefícios diferenciados para os planos mensais e anuais, 
+                incentivando você a receber um acompanhamento mais completo e optar pelo 
+                plano anual devido às vantagens extras e ao custo mais barato.
+              </p>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
