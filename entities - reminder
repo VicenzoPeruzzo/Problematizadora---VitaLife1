@@ -1,0 +1,42 @@
+{
+  "name": "Reminder",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Título do lembrete"
+    },
+    "message": {
+      "type": "string",
+      "description": "Mensagem do lembrete"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "appointment",
+        "subscription",
+        "welcome"
+      ],
+      "description": "Tipo de lembrete"
+    },
+    "date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data e hora do lembrete"
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false,
+      "description": "Se o lembrete foi lido"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "Email do usuário"
+    }
+  },
+  "required": [
+    "title",
+    "message",
+    "type"
+  ]
+}
