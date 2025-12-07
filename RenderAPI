@@ -1,0 +1,10 @@
+Por que escolhemos o Render?
+Optamos pelo Render como nossa plataforma de nuvem (PaaS - Platform as a Service) por quatro motivos estratégicos:
+
+Integração Contínua (CI/CD): O Render conecta-se diretamente ao nosso repositório no GitHub. Isso significa que qualquer atualização no código (git push) gera automaticamente uma nova versão da API na nuvem, sem necessidade de transferências manuais de arquivos (FTP).
+
+Suporte Nativo a Docker: A plataforma lê e executa perfeitamente o nosso arquivo Dockerfile. Isso garante que o ambiente de produção na nuvem seja idêntico ao nosso ambiente de desenvolvimento, eliminando erros de compatibilidade.
+
+Segurança Automática: O Render fornece certificados SSL (HTTPS) automaticamente, garantindo que os dados dos pacientes trafeguem de forma criptografada e segura, requisito essencial na área da saúde.
+
+Foco no Desenvolvimento: Por ser uma PaaS, o Render gerencia a infraestrutura de servidores, permitindo que a equipe foque 100% na lógica da aplicação e nas regras de negócio da VitaLife.
