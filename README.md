@@ -1,5 +1,3 @@
-Aqui está o README resumido e formal, sem emojis.
-
 VitaLife - Sistema de Gestão de Saúde
 Este repositório contém o código-fonte do projeto VitaLife, desenvolvido como parte da disciplina "Problematizadora". O sistema integra médicos, pacientes e unidades de saúde em uma plataforma unificada.
 
